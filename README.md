@@ -1,1 +1,3 @@
 # ChatterBox
+
+Yandex.Lyceum project
