@@ -1,5 +1,7 @@
-from ui.MainForm import *
 import sys
+sys.path.append('../')
+from ui.MainForm import *
+
 
 if __name__ == "__main__":
     import sys
