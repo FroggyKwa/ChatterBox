@@ -1,10 +1,12 @@
+from _md5 import md5
+
 from peewee import *
 
 db = SqliteDatabase('../database.db')
 
 
 class User(Model):
-    id = IntegerField(primary_key=True)
+    id = AutoField(primary_key=True)
     login = CharField()
     password = CharField()
 
@@ -13,7 +15,7 @@ class User(Model):
 
 
 class Messages(Model):
-    id = IntegerField()
+    id = AutoField(primary_key=True)
     from_id = ForeignKeyField(User)
     content = CharField()
     created_at = DateField()
@@ -22,5 +24,18 @@ class Messages(Model):
         database = db
 
 
+def auth(login, password) -> bool:
+    if not User.select().where(User.login == login and User, User.password == password):
+        return False
+    return True
+
+
+def add_user(login, password):
+    user = User(login, password)
+    user.save()
+
+
 User.create_table()
 Messages.create_table()
+
+# TODO: Допилить add_user, разботать autoincrement id

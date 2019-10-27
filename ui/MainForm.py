@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QMainWindow
+from ui import login, signup
 
 
 class ChatterBox(QMainWindow):
@@ -40,18 +41,42 @@ class ChatterBox(QMainWindow):
         self.menuRegister = QtWidgets.QMenu(self.menubar)
         self.menuRegister.setObjectName("menuRegister")
         MainWindow.setMenuBar(self.menubar)
-        self.menubar.addAction(self.menuLog_In.menuAction())
-        self.menubar.addAction(self.menuSign_Up.menuAction())
-        self.menubar.addAction(self.menuRegister.menuAction())
+
+        self.login = self.menubar.addAction('Sign In')
+        self.login.triggered.connect(self.open_login_form)
+
+        self.reg = self.menubar.addAction('Sign Up')
+        self.reg.triggered.connect(self.open_reg_form)
+
+
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def open_login_form(self):
+        self.login_form = login.LoginForm()
+        self.login_form.show()
+
+    def open_reg_form(self):
+        self.reg_form = signup.SignUpForm()
+        self.reg_form.show()
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.messagebox_text_edit.setPlaceholderText(_translate("MainWindow", "Type your message here"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ChatterBox"))
+        self.messagebox_text_edit.setPlaceholderText(_translate("", "Type your message here"))
         self.current_user_lbl.setText(_translate("MainWindow", "Username"))
         self.menuLog_In.setTitle(_translate("MainWindow", "Log-In"))
         self.menuSign_Up.setTitle(_translate("MainWindow", "Sign-Up"))
         self.menuRegister.setTitle(_translate("MainWindow", "Register"))
+
+
+if __name__ == "__main__":
+    import sys
+
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = ChatterBox()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())

@@ -32,8 +32,6 @@ class Handler(LineOnlyReceiver):
             else:
                 self.sendLine('login incorrect'.encode())
 
-            
-
 
 class Server(ServerFactory):
     def __init__(self):
