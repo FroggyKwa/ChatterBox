@@ -2,9 +2,10 @@ import sys
 from twisted.internet.protocol import ClientFactory
 from twisted.protocols.basic import LineOnlyReceiver
 from ui.MainForm import ChatterBox
-from ui.login import *
-from ui.signup import *
+from hashlib import md5
 from PyQt5.QtWidgets import QMainWindow, QApplication
+
+from ui.signup import check_valid
 
 
 class Client(LineOnlyReceiver):
@@ -30,7 +31,6 @@ class Connector(ClientFactory):
 
 
 class ChatWindow(QMainWindow, ChatterBox):
-
     def __init__(self):
         super().__init__()
         super().setupUi(self)
@@ -39,6 +39,7 @@ class ChatWindow(QMainWindow, ChatterBox):
         self.send_btn.pressed.connect(self.send_message)
         self.login_form.submit_btn.pressed.connect(self.login_user)
         self.reg_form.submit_btn.pressed.connect(self.create_user)
+        self.login = None
 
     def keyPressEvent(self, event):
         from PyQt5.QtCore import Qt
@@ -50,11 +51,11 @@ class ChatWindow(QMainWindow, ChatterBox):
 
     def send_message(self, message=None):
         if message:
-            self.client.send_message(message)
+            self.client.send_message(self.login + '::' + message)
         else:
             if not self.messagebox_text_edit.toPlainText().isspace():
                 message = self.messagebox_text_edit.toPlainText()
-                self.client.send_message(message)
+                self.client.send_message(self.login + '::' + message)
                 self.messagebox_text_edit.clear()
             else:
                 return
@@ -64,13 +65,16 @@ class ChatWindow(QMainWindow, ChatterBox):
         password = self.reg_form.password_ln.text()
         confirm = self.reg_form.confirm_password_ln.text()
         if check_valid(login) and check_valid(password) and password == confirm:
-            self.send_message(f'/register {login} {password}')
+            self.login = login
+            self.send_message(f'/register {login} {md5(password.encode()).hexdigest()}')
+            self.current_user_lbl.setText(login)
 
     def login_user(self):
         login = self.login_form.login_ln.text()
         password = self.login_form.password_ln.text()
         if check_valid(login) and check_valid(password):
-            self.send_message(f'/login {login} {password}')
+            self.login = login
+            self.send_message(f'/login {login} {md5(password.encode()).hexdigest()}')
 
 
 app = QApplication(sys.argv)
@@ -81,6 +85,7 @@ window.show()
 qt5reactor.install()
 from twisted.internet import reactor
 
-reactor.connectTCP("localhost", 7410, Connector(window))
+reactor.connectTCP("localhost", 7411, Connector(window))
 window.reactor = reactor
 reactor.run()
+# TODO: запилить нормальный text_history_box

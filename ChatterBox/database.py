@@ -1,4 +1,5 @@
 from peewee import *
+from hashlib import md5
 
 db = SqliteDatabase('../database.db')
 
@@ -20,13 +21,13 @@ class Messages(Model):
         database = db
 
 
-def check_unique(login, password) -> bool:
-    if not User.select().where(User.login == login, User.password == password):
-        return False
-    return True
+def in_database(login, password) -> bool:
+    if User.select().where(User.login == login, User.password == md5(password.encode()).hexdigest()):
+        return True
+
+# TODO: доделать проверку на наличие пользователя в db
 
 
 def add_user(login, password):
     user = User(login=login, password=password)
     user.save()
-
