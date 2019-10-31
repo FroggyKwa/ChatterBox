@@ -4,13 +4,16 @@ from PyQt5.QtWidgets import QMainWindow
 from ui import login, signup
 
 
-class ChatterBox(QMainWindow):
+class ChatterBox(object):
     def __init__(self):
         super().__init__()
+        self.login_form = login.LoginForm()
+        self.reg_form = signup.SignUpForm()
+
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(859, 588)
+        MainWindow.resize(859, 600)
         MainWindow.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -31,6 +34,10 @@ class ChatterBox(QMainWindow):
         self.current_user_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.current_user_lbl.setObjectName("current_user_lbl")
         MainWindow.setCentralWidget(self.centralwidget)
+        self.send_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.send_btn.move(750, 555)
+        self.send_btn.setText('Send')
+        self.send_btn.resize(self.send_btn.sizeHint())
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 859, 21))
         self.menubar.setObjectName("menubar")
@@ -48,17 +55,13 @@ class ChatterBox(QMainWindow):
         self.reg = self.menubar.addAction('Sign Up')
         self.reg.triggered.connect(self.open_reg_form)
 
-
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def open_login_form(self):
-        self.login_form = login.LoginForm()
         self.login_form.show()
 
     def open_reg_form(self):
-        self.reg_form = signup.SignUpForm()
         self.reg_form.show()
 
     def retranslateUi(self, MainWindow):
@@ -69,14 +72,3 @@ class ChatterBox(QMainWindow):
         self.menuLog_In.setTitle(_translate("MainWindow", "Log-In"))
         self.menuSign_Up.setTitle(_translate("MainWindow", "Sign-Up"))
         self.menuRegister.setTitle(_translate("MainWindow", "Register"))
-
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = ChatterBox()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())

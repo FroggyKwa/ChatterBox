@@ -1,6 +1,11 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QRect
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLineEdit, QLabel, QApplication, QPushButton
+
+
+def check_valid(ln: QLineEdit):
+    if ln.isspace() or not ln:
+        return False
+    return True
 
 
 class SignUpForm(QMainWindow):
@@ -17,9 +22,9 @@ class SignUpForm(QMainWindow):
         self.password_ln.setGeometry(QRect(40, 100, 191, 20))
         self.password_ln.setEchoMode(QLineEdit.Password)
 
-        self.confirm_password = QLineEdit(self)
-        self.confirm_password.setGeometry(QRect(40, 150, 191, 20))
-        self.confirm_password.setEchoMode(QLineEdit.Password)
+        self.confirm_password_ln = QLineEdit(self)
+        self.confirm_password_ln.setGeometry(QRect(40, 150, 191, 20))
+        self.confirm_password_ln.setEchoMode(QLineEdit.Password)
 
         self.label1 = QLabel(self)
         self.label1.setText('Login')
