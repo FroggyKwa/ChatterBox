@@ -27,6 +27,7 @@ def check_valid_password(ps):
     if flag == -1:
         return 'Password must be at least 6 characters and contain both letters and numbers'
 
+
 class SignUpForm(QMainWindow):
     def __init__(self):
         super().__init__()

@@ -1,5 +1,4 @@
 from peewee import *
-from hashlib import md5
 
 db = SqliteDatabase('../database.db')
 
@@ -27,9 +26,6 @@ def check_auth(login, password) -> bool:
 
 def check_unique(login) -> bool:
     return bool(User.select().where(User.login == login))
-
-
-# TODO: доделать проверку на наличие пользователя в db
 
 
 def add_user(login, password):

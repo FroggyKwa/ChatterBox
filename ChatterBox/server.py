@@ -10,7 +10,6 @@ class Handler(LineOnlyReceiver):
 
     def connectionMade(self):
         self.factory.clients.append(self)
-        print('connected')
         self.login = None
 
     def connectionLost(self, reason=ConnectionDone):
@@ -50,9 +49,6 @@ class Handler(LineOnlyReceiver):
                     self.sendLine('<user already exists>'.encode())
 
 
-# TODO: скорректировать работу регистрации
-
-
 class Server(ServerFactory):
     def __init__(self):
         self.clients = list()
@@ -63,5 +59,5 @@ class Server(ServerFactory):
         print('Server started...')
 
 
-reactor.listenTCP(7411, Server())
+reactor.listenTCP(7410, Server())
 reactor.run()

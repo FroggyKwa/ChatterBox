@@ -31,8 +31,10 @@ class Client(LineOnlyReceiver):
             self.factory.window.messages_history_plain_text.appendPlainText(message)
 
     def send_message(self, message):
-        self.sendLine(message.encode())
-
+        try:
+            self.sendLine(message.encode())
+        except:
+            window.messages_history_plain_text.appendPlainText('<ERROR 522>\nCONNECTION TIMED OUT')
 
 class Connector(ClientFactory):
     window: 'ChatWindow'
@@ -64,7 +66,7 @@ class ChatWindow(QMainWindow, ChatterBox):
     def send_message(self, message=None):
         if message:
             if self.login:
-                message = f'{self.login::{message}}'
+                message = f'{self.login}::{message}'
             self.client.send_message(message)
         else:
             if self.messagebox_text_edit.toPlainText().strip():
@@ -108,6 +110,6 @@ window.show()
 qt5reactor.install()
 from twisted.internet import reactor
 
-reactor.connectTCP("localhost", 7411, Connector(window))
+reactor.connectTCP("localhost", 7410, Connector(window))
 window.reactor = reactor
 reactor.run()
