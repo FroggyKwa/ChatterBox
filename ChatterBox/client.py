@@ -5,7 +5,7 @@ from ui.MainForm import ChatterBox
 from hashlib import md5
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
-from ui.signup import check_valid
+from ui.signup import check_valid_login, check_valid_password
 
 
 class Client(LineOnlyReceiver):
@@ -16,7 +16,19 @@ class Client(LineOnlyReceiver):
 
     def lineReceived(self, line: bytes):
         message = line.decode()
-        self.factory.window.messages_history_plain_text.appendPlainText(message)
+        if message == '<user already exists>':
+            window.reg_form.error_label.setText('User with this username already exists')
+            window.reg_form.error_label.resize(window.reg_form.error_label.sizeHint())
+            return
+        elif message == '<login or password is incorrect>':
+            window.login_form.error_label.setText('Login or password is incorrect')
+        elif message.startswith('successful'):
+            login = message.replace('successful', '')
+            window.current_user_lbl.setText(login)
+            self.login = login
+            window.reg_form.close()
+        else:
+            self.factory.window.messages_history_plain_text.appendPlainText(message)
 
     def send_message(self, message):
         self.sendLine(message.encode())
@@ -51,11 +63,13 @@ class ChatWindow(QMainWindow, ChatterBox):
 
     def send_message(self, message=None):
         if message:
-            self.client.send_message(self.login + '::' + message)
+            if self.login:
+                message = f'{self.login::{message}}'
+            self.client.send_message(message)
         else:
-            if not self.messagebox_text_edit.toPlainText().isspace():
+            if self.messagebox_text_edit.toPlainText().strip():
                 message = self.messagebox_text_edit.toPlainText()
-                self.client.send_message(self.login + '::' + message)
+                self.client.send_message(((self.login + '::') if self.login else '') + message)
                 self.messagebox_text_edit.clear()
             else:
                 return
@@ -64,17 +78,26 @@ class ChatWindow(QMainWindow, ChatterBox):
         login = self.reg_form.login_ln.text()
         password = self.reg_form.password_ln.text()
         confirm = self.reg_form.confirm_password_ln.text()
-        if check_valid(login) and check_valid(password) and password == confirm:
-            self.login = login
-            self.send_message(f'/register {login} {md5(password.encode()).hexdigest()}')
-            self.current_user_lbl.setText(login)
+        if not check_valid_login(login):
+            if not check_valid_password(password):
+                if password == confirm:
+                    self.send_message(f'/register {login} {md5(password.encode()).hexdigest()}')
+                else:
+                    self.reg_form.error_label.setText('Passwords do not match')
+            else:
+                self.reg_form.error_label.setText(check_valid_password(password))
+                return
+        else:
+            self.reg_form.error_label.setText(check_valid_login(login))
 
     def login_user(self):
         login = self.login_form.login_ln.text()
         password = self.login_form.password_ln.text()
-        if check_valid(login) and check_valid(password):
-            self.login = login
+        if not check_valid_login(login) and not check_valid_password(password):
             self.send_message(f'/login {login} {md5(password.encode()).hexdigest()}')
+            self.login = login
+        else:
+            self.login_form.error_label.setText('Login or password is incorrect')
 
 
 app = QApplication(sys.argv)
@@ -88,4 +111,3 @@ from twisted.internet import reactor
 reactor.connectTCP("localhost", 7411, Connector(window))
 window.reactor = reactor
 reactor.run()
-# TODO: запилить нормальный text_history_box

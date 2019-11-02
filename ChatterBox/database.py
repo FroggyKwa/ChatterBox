@@ -21,9 +21,13 @@ class Messages(Model):
         database = db
 
 
-def in_database(login, password) -> bool:
-    if User.select().where(User.login == login, User.password == md5(password.encode()).hexdigest()):
-        return True
+def check_auth(login, password) -> bool:
+    return bool(User.select().where(User.login == login, User.password == password.encode()))
+
+
+def check_unique(login) -> bool:
+    return bool(User.select().where(User.login == login))
+
 
 # TODO: доделать проверку на наличие пользователя в db
 

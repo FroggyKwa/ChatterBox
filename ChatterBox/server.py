@@ -19,7 +19,7 @@ class Handler(LineOnlyReceiver):
 
     def lineReceived(self, line):
         message = line.decode()
-        login = message.split('::')[0]
+        login = message.split('::')[0] if not message.startswith('/') else ''
         message = message.replace(f'{login}::', '')
         print(f'got message from {login} -> {message}')
         if self.login is not None and not (message.startswith('/login') or message.startswith('/register')):
@@ -30,21 +30,26 @@ class Handler(LineOnlyReceiver):
         else:
             if message.startswith('/login '):
                 login, password = message.replace('/login ', '').split()[0], message.replace('/login ', '').split()[1]
-                if database.in_database(login, password):
+                if database.check_auth(login, password):
                     self.login = login
                     print(f'user connected -> {login}')
+                    self.sendLine(f'successful {login}'.encode())
                     self.sendLine(f'Welcome, {login}'.encode())
                 else:
                     print('bad attempt to login')
-                    self.sendLine('Login or password are incorrect'.encode())
-            if message.startswith('/register '):
+                    self.sendLine('<login or password is incorrect>'.encode())
+            elif message.startswith('/register '):
                 login, password = message.replace('/register ', '').split()[0], \
                                   message.replace('/register ', '').split()[1]
-                if not database.in_database(login, password):
-                    database.add_user(login, password)
+                if not database.check_unique(login):
+                    database.add_user(login, password.encode())
                     self.login = login
                     print(f'new user connected -> {login}')
+                    self.sendLine(f'successful {login}'.encode())
                     self.sendLine('Welcome in our friendly community'.encode())
+                else:
+                    self.sendLine('<user already exists>'.encode())
+
 
 # TODO: скорректировать работу регистрации
 

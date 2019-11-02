@@ -68,7 +68,6 @@ class ChatterBox(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ChatterBox"))
         self.messagebox_text_edit.setPlaceholderText(_translate("", "Type your message here"))
-        self.current_user_lbl.setText(_translate("MainWindow", "Username"))
         self.menuLog_In.setTitle(_translate("MainWindow", "Log-In"))
         self.menuSign_Up.setTitle(_translate("MainWindow", "Sign-Up"))
         self.menuRegister.setTitle(_translate("MainWindow", "Register"))
