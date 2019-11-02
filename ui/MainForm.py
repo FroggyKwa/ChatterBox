@@ -18,7 +18,7 @@ class ChatterBox(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.messages_history_plain_text = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.messages_history_plain_text.setEnabled(False)
+        self.messages_history_plain_text.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.messages_history_plain_text.setGeometry(QtCore.QRect(10, 30, 831, 441))
         self.messages_history_plain_text.setPlaceholderText("")
         self.messages_history_plain_text.setObjectName("messages_history_plain_text")
