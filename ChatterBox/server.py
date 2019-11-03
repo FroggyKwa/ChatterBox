@@ -11,6 +11,8 @@ class Handler(LineOnlyReceiver):
     def connectionMade(self):
         self.factory.clients.append(self)
         self.login = None
+        print('connected')
+        self.sendLine(f'Online now: {len(self.factory.clients)}'.encode())
 
     def connectionLost(self, reason=ConnectionDone):
         self.factory.clients.remove(self)

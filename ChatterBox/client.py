@@ -29,6 +29,8 @@ class Client(LineOnlyReceiver):
             window.login = login
             window.reg_form.close()
             window.login_form.close()
+        elif message.startswith('Online now: '):
+            window.online_label.setText(message)
         else:
             self.factory.window.messages_history_plain_text.appendPlainText(message)
 

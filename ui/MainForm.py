@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QLabel
 from ui import login, signup
 
 
@@ -36,6 +36,10 @@ class ChatterBox(QMainWindow):
         self.current_user_lbl.setFont(font)
         self.current_user_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.current_user_lbl.setObjectName("current_user_lbl")
+
+        self.online_label = QLabel(self)
+        self.online_label.setText('Online now: ')
+        self.online_label.setGeometry(650, 10, 100, 50)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.send_btn = QtWidgets.QPushButton(self.centralwidget)
