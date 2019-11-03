@@ -1,3 +1,5 @@
+import datetime
+
 from peewee import *
 
 db = SqliteDatabase('../database.db')
@@ -31,3 +33,11 @@ def check_unique(login) -> bool:
 def add_user(login, password):
     user = User(login=login, password=password)
     user.save()
+
+
+def add_message(content, login, date):
+    user = User.get(User.login == login)
+    date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+    message = Messages(from_id=user.id, content=content, created_at=date)
+    message.save()
+

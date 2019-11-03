@@ -18,10 +18,13 @@ class Handler(LineOnlyReceiver):
 
     def lineReceived(self, line):
         message = line.decode()
-        login = message.split('::')[0] if not message.startswith('/') else ''
-        message = message.replace(f'{login}::', '')
-        print(f'got message from {login} -> {message}')
         if self.login is not None and not (message.startswith('/login') or message.startswith('/register')):
+            login = message.split('::')[1]
+            date = message.split('::')[2]
+            message = message.replace(f'{login}::', '')
+            message = message.replace(f'::{date}', '')
+            print(f'got message from {login} -> {message}')
+            database.add_message(message, login, date)
             message = f'<{self.login}>: {message}'
             for user in self.factory.clients:
                 user.sendLine(message.encode())

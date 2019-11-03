@@ -1,4 +1,5 @@
 import sys
+import datetime
 from twisted.internet.protocol import ClientFactory
 from twisted.protocols.basic import LineOnlyReceiver
 from ui.MainForm import ChatterBox
@@ -23,10 +24,11 @@ class Client(LineOnlyReceiver):
         elif message == '<login or password is incorrect>':
             window.login_form.error_label.setText('Login or password is incorrect')
         elif message.startswith('successful'):
-            login = message.replace('successful', '')
+            login = message.replace('successful ', '')
             window.current_user_lbl.setText(login)
-            self.login = login
+            window.login = login
             window.reg_form.close()
+            window.login_form.close()
         else:
             self.factory.window.messages_history_plain_text.appendPlainText(message)
 
@@ -65,13 +67,13 @@ class ChatWindow(QMainWindow, ChatterBox):
 
     def send_message(self, message=None):
         if message:
-            if self.login:
-                message = f'{self.login}::{message}'
             self.client.send_message(message)
         else:
             if self.messagebox_text_edit.toPlainText().strip():
                 message = self.messagebox_text_edit.toPlainText()
-                self.client.send_message(((self.login + '::') if self.login else '') + message)
+                dt = str(datetime.datetime.now()).split('.')[0]
+                date, time = dt.split()[0], dt.split()[1]
+                self.client.send_message(f'{message}::{self.login}::{date} {time}')
                 self.messagebox_text_edit.clear()
             else:
                 return
