@@ -1,5 +1,6 @@
+from PyQt5 import QtCore
 from PyQt5.QtCore import QRect
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLineEdit, QLabel, QApplication, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLineEdit, QLabel, QApplication, QPushButton, QDialog
 
 
 def check_valid_login(ln):
@@ -28,14 +29,16 @@ def check_valid_password(ps):
         return 'Password must be at least 6 characters and contain both letters and numbers'
 
 
-class SignUpForm(QMainWindow):
-    def __init__(self):
-        super().__init__()
+class SignUpForm(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
         self.initUI()
 
     def initUI(self):
         self.resize(268, 275)
         self.setWindowTitle('Sign up')
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
+
         self.login_ln = QLineEdit(self)
         self.login_ln.setGeometry(QRect(40, 70, 191, 20))
 

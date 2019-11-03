@@ -16,7 +16,7 @@ class User(Model):
 class Messages(Model):
     from_id = ForeignKeyField(User)
     content = CharField()
-    created_at = DateField()
+    created_at = DateTimeField()
 
     class Meta:
         database = db
@@ -40,4 +40,3 @@ def add_message(content, login, date):
     date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
     message = Messages(from_id=user.id, content=content, created_at=date)
     message.save()
-

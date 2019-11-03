@@ -4,7 +4,7 @@ from twisted.internet.protocol import ClientFactory
 from twisted.protocols.basic import LineOnlyReceiver
 from ui.MainForm import ChatterBox
 from hashlib import md5
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QApplication
 
 from ui.signup import check_valid_login, check_valid_password
 
@@ -38,6 +38,7 @@ class Client(LineOnlyReceiver):
         except:
             window.messages_history_plain_text.appendPlainText('<ERROR 522>\nCONNECTION TIMED OUT')
 
+
 class Connector(ClientFactory):
     window: 'ChatWindow'
     protocol = Client
@@ -46,7 +47,7 @@ class Connector(ClientFactory):
         self.window = app_window
 
 
-class ChatWindow(QMainWindow, ChatterBox):
+class ChatWindow(ChatterBox):
     def __init__(self):
         super().__init__()
         super().setupUi(self)
