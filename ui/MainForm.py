@@ -70,7 +70,7 @@ class ChatterBox(QMainWindow):
         self.reg.triggered.connect(self.open_reg_form)
 
         self.edit = self.menubar.addAction('Edit')
-        #self.edit.setVisible(False)
+        self.edit.setVisible(False)
         self.edit.triggered.connect(self.open_edit_form)
 
         self.retranslateUi(MainWindow)
