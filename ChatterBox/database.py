@@ -35,8 +35,9 @@ def check_unique(login) -> bool:
     return bool(User.select().where(User.login == login))
 
 
-def add_user(login, password):
-    user = User(login=login, password=password)
+def add_user(login, password, country='', phone='', website='', quote='', author=''):
+    user = User(login=login, password=password, country=country, phone_number=phone, website=website,
+                favourite_quote=quote, favourite_book_author=author)
     user.save()
 
 

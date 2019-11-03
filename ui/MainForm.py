@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QLabel
-from ui import login, signup
+from ui import login, signup, edit
 
 
 class ChatterBox(QMainWindow):
@@ -8,6 +8,7 @@ class ChatterBox(QMainWindow):
         super().__init__()
         self.login_form = login.LoginForm(self)
         self.reg_form = signup.SignUpForm(self)
+        self.edit_form = edit.EditForm(self)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -68,6 +69,10 @@ class ChatterBox(QMainWindow):
         self.reg = self.menubar.addAction('Sign Up')
         self.reg.triggered.connect(self.open_reg_form)
 
+        self.edit = self.menubar.addAction('Edit')
+        #self.edit.setVisible(False)
+        self.edit.triggered.connect(self.open_edit_form)
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -77,6 +82,9 @@ class ChatterBox(QMainWindow):
 
     def open_reg_form(self):
         self.reg_form.show()
+
+    def open_edit_form(self):
+        self.edit_form.show()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
