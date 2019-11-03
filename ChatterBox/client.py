@@ -118,3 +118,5 @@ from twisted.internet import reactor
 reactor.connectTCP("localhost", 7410, Connector(window))
 window.reactor = reactor
 reactor.run()
+
+# TODO: СДЕЛАТЬ ДОБАВЛЕНИЕ И ПРОСМОТР ИНФО О ПОЛЬЗОВАТЕЛЕ
