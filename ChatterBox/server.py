@@ -20,7 +20,9 @@ class Handler(LineOnlyReceiver):
 
     def lineReceived(self, line):
         message = line.decode()
-        if self.login is not None and not (message.startswith('/login') or message.startswith('/register')):
+        if self.login and not (message.startswith('/login') or
+                                           message.startswith('/register') or
+                                           message.startswith('/change_user_data')):
             login = message.split('::')[1]
             date_time = message.split('::')[2]
             date, time = date_time.split()[0], date_time.split()[1]
@@ -28,10 +30,33 @@ class Handler(LineOnlyReceiver):
             message = message.replace(f'{login}::', '')
             message = message.replace(f'::{date_time}', '')
             print(f'got message from {login} -> {message}')
-            database.add_message(message, login, date_time)
+            database.add_message(message, self.login, date_time)
             message = f'[{date} {time}]      <{self.login}>: {message}'
             for user in self.factory.clients:
                 user.sendLine(message.encode())
+        elif self.login and message.startswith('/change_user_data'):
+            message = message.replace('/change_user_data ', '').split()
+            if len(message) == 2:
+                edit_field = message[0]
+                new_val = message[1]
+                if edit_field == 'login':
+                    database.edit_user_info(self.login, new_login=new_val)
+                    self.login = new_val
+                    self.sendLine(f'nickname changed {self.login}'.encode())
+                if edit_field == 'password':
+                    database.edit_user_info(self.login, password=new_val)
+                    self.sendLine('password changed'.encode())
+                if edit_field == 'country':
+                    database.edit_user_info(self.login, country=new_val)
+                if edit_field == 'phone':
+                    database.edit_user_info(self.login, phone=new_val)
+                if edit_field == 'website':
+                    database.edit_user_info(self.login, website=new_val)
+                if edit_field == 'author':
+                    database.edit_user_info(self.login, author=new_val)
+                if edit_field == 'quote':
+                    database.edit_user_info(self.login, quote=new_val)
+
         else:
             if message.startswith('/login '):
                 login, password = message.replace('/login ', '').split()[0], message.replace('/login ', '').split()[1]

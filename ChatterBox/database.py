@@ -48,4 +48,20 @@ def add_message(content, login, date):
     message.save()
 
 
-db.create_tables([User, Messages])
+def edit_user_info(login, new_login='', password='', country='', phone='', website='', quote='', author=''):
+    user = User.get(User.login == login)
+    if new_login:
+        user.login = new_login
+    if password:
+        user.password = password
+    if country:
+        user.country = country
+    if phone:
+        user.phone_number = phone
+    if website:
+        user.website = website
+    if quote:
+        user.favourite_quote = quote
+    if author:
+        user.favourite_book_author = author
+    user.save()

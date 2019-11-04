@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QPushButton, QLineEdit
 
 
 class EditForm(QDialog):
@@ -26,6 +26,7 @@ class EditForm(QDialog):
 
         self.password_ln = QtWidgets.QLineEdit(EditForm)
         self.password_ln.setGeometry(QtCore.QRect(30, 110, 113, 20))
+        self.password_ln.setEchoMode(QLineEdit.Password)
         self.password_ln.setObjectName("password_ln")
 
         self.label_2 = QtWidgets.QLabel(EditForm)
@@ -68,8 +69,13 @@ class EditForm(QDialog):
         self.label_7.setGeometry(QtCore.QRect(290, 140, 281, 16))
         self.label_7.setObjectName("label_7")
 
+        self.submit_btn = QPushButton(self)
+        self.submit_btn.setText('Save')
+        self.submit_btn.move(550, 410)
+
         self.retranslateUi(EditForm)
         QtCore.QMetaObject.connectSlotsByName(EditForm)
+
 
     def retranslateUi(self, EditForm):
         _translate = QtCore.QCoreApplication.translate
