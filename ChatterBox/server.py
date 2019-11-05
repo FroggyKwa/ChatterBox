@@ -12,7 +12,8 @@ class Handler(LineOnlyReceiver):
         self.factory.clients.append(self)
         self.login = None
         print('connected')
-        self.sendLine(f'Online now: {len(self.factory.clients)}'.encode())
+        for client in self.factory.clients:
+            client.sendLine(f'Online now: {len(self.factory.clients)}'.encode())
 
     def connectionLost(self, reason=ConnectionDone):
         self.factory.clients.remove(self)
@@ -35,27 +36,31 @@ class Handler(LineOnlyReceiver):
             for user in self.factory.clients:
                 user.sendLine(message.encode())
         elif self.login and message.startswith('/change_user_data'):
-            message = message.replace('/change_user_data ', '').split()
-            if len(message) == 2:
-                edit_field = message[0]
-                new_val = message[1]
-                if edit_field == 'login':
-                    database.edit_user_info(self.login, new_login=new_val)
-                    self.login = new_val
-                    self.sendLine(f'nickname changed {self.login}'.encode())
-                if edit_field == 'password':
-                    database.edit_user_info(self.login, password=new_val)
-                    self.sendLine('password changed'.encode())
-                if edit_field == 'country':
-                    database.edit_user_info(self.login, country=new_val)
-                if edit_field == 'phone':
-                    database.edit_user_info(self.login, phone=new_val)
-                if edit_field == 'website':
-                    database.edit_user_info(self.login, website=new_val)
-                if edit_field == 'author':
-                    database.edit_user_info(self.login, author=new_val)
-                if edit_field == 'quote':
-                    database.edit_user_info(self.login, quote=new_val)
+            message = message.replace('/change_user_data ', '')
+            edit_field = message.split()[0].strip()
+            new_val = message.replace(edit_field, '').strip()
+            if edit_field == 'login':
+                database.edit_user_info(self.login, new_login=new_val)
+                self.login = new_val
+                self.sendLine(f'nickname changed {self.login}'.encode())
+            if edit_field == 'password':
+                database.edit_user_info(self.login, password=new_val)
+                self.sendLine('password changed'.encode())
+            if edit_field == 'country':
+                database.edit_user_info(self.login, country=new_val)
+            if edit_field == 'phone':
+                database.edit_user_info(self.login, phone=new_val)
+            if edit_field == 'website':
+                database.edit_user_info(self.login, website=new_val)
+            if edit_field == 'author':
+                database.edit_user_info(self.login, author=new_val)
+            if edit_field == 'quote':
+                database.edit_user_info(self.login, quote=new_val)
+        elif message.startswith('/check'):
+            login = message.replace('/check ', '')
+            if database.is_unique(login):
+                self.sendLine(f'unique {login}'.encode())
+
 
         else:
             if message.startswith('/login '):
@@ -71,7 +76,7 @@ class Handler(LineOnlyReceiver):
             elif message.startswith('/register '):
                 login, password = message.replace('/register ', '').split()[0], \
                                   message.replace('/register ', '').split()[1]
-                if not database.check_unique(login):
+                if not database.is_unique(login):
                     database.add_user(login, password.encode())
                     self.login = login
                     print(f'new user connected -> {login}')

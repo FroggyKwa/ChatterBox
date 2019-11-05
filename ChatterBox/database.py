@@ -31,7 +31,7 @@ def check_auth(login, password) -> bool:
     return bool(User.select().where(User.login == login, User.password == password.encode()))
 
 
-def check_unique(login) -> bool:
+def is_unique(login) -> bool:
     return bool(User.select().where(User.login == login))
 
 
