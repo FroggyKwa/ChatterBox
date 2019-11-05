@@ -24,6 +24,8 @@ class Client(LineOnlyReceiver):
             return
         elif message == '<login or password is incorrect>':
             window.login_form.error_label.setText('Login or password is incorrect')
+        elif message.startswith('unique '):
+            window.uniques.append(message.replace('unique ', ''))
         elif message.startswith('successful'):
             login = message.replace('successful ', '')
             window.current_user_lbl.setText(login)
@@ -38,7 +40,6 @@ class Client(LineOnlyReceiver):
             self.factory.window.current_user_lbl.setText(window.login)
             self.factory.window.messages_history_plain_text.appendPlainText(f'Nickname changed to {window.login}')
         elif message.startswith('password changed'):
-            self.factory.window.login = message.replace('password changed ', '')
             self.factory.window.current_user_lbl.setText(window.login)
             self.factory.window.messages_history_plain_text.appendPlainText(f'Password changed')
 
@@ -71,6 +72,7 @@ class ChatWindow(ChatterBox):
         self.reg_form.submit_btn.pressed.connect(self.create_user)
         self.login = None
         self.edit_form.submit_btn.pressed.connect(self.save_user_data)
+        self.uniques = list()
 
     def keyPressEvent(self, event):
         from PyQt5.QtCore import Qt
@@ -126,20 +128,40 @@ class ChatWindow(ChatterBox):
         phone = self.edit_form.phone_ln.text()
         website = self.edit_form.website_ln.text()
         quote = self.edit_form.quote_plain_text.toPlainText()
-        if password and not check_valid_password(password):
-            self.send_message(f'/change_user_data password {md5(password.encode()).hexdigest()}')
-        else:
-            pass  # TODO: вывод текста в error label
-        if login and not check_valid_login(login):
-            self.send_message(f'/change_user_data login {login}')
-        else:
-            pass  # TODO: вывод текста в error label
+        if password:
+            if not check_valid_password(password):
+                self.send_message(f'/change_user_data password {md5(password.encode()).hexdigest()}')
+            else:
+                self.edit_form.password_error_label.setText('Password incorrect')
+                self.edit_form.password_error_label.resize(self.edit_form.password_error_label.sizeHint())
 
-        self.send_message(f'/change_user_data author {author}')
-        self.send_message(f'/change_user_data country {country}')
-        self.send_message(f'/change_user_data phone {phone}')
-        self.send_message(f'/change_user_data website {website}')
-        self.send_message(f'/change_user_data quote {quote}')
+        if login:
+            if not check_valid_login(login):
+                self.send_message(f'/check {login}')
+                if login in self.uniques:
+                    self.send_message(f'/change_user_data login {login}')
+                else:
+                    self.edit_form.login_error_label.setText('Username has already been taken')
+                    self.edit_form.login_error_label.resize(self.edit_form.login_error_label.sizeHint())
+
+            else:
+                self.edit_form.login_error_label.setText('Incorrect login')
+                self.edit_form.login_error_label.resize(self.edit_form.login_error_label.sizeHint())
+        if author:
+            self.send_message(f'/change_user_data author {author}')
+        if country:
+            self.send_message(f'/change_user_data country {country}')
+        if website:
+            self.send_message(f'/change_user_data website {website}')
+        if quote:
+            self.send_message(f'/change_user_data quote {quote}')
+        if phone:
+            if phone[1:].isnumeric():
+                self.send_message(f'/change_user_data phone {phone}')
+            else:
+                self.edit_form.phone_error_label.setText('Incorrect number format')
+                self.edit_form.phone_error_label.resize(self.edit_form.phone_error_label.sizeHint())
+
 
 
 app = QApplication(sys.argv)
@@ -154,4 +176,4 @@ reactor.connectTCP("localhost", 7410, Connector(window))
 window.reactor = reactor
 reactor.run()
 
-# TODO: СДЕЛАТЬ ДОБАВЛЕНИЕ И ПРОСМОТР ИНФО О ПОЛЬЗОВАТЕЛЕ
+# TODO: СДЕЛАТЬ ПРОСМОТР ИНФО О ПОЛЬЗОВАТЕЛЕ
