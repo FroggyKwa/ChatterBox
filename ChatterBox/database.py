@@ -32,7 +32,7 @@ def check_auth(login, password) -> bool:
 
 
 def is_unique(login) -> bool:
-    return bool(User.select().where(User.login == login))
+    return bool(User.get(User.login == login))
 
 
 def add_user(login, password, country='', phone='', website='', quote='', author=''):
@@ -65,3 +65,8 @@ def edit_user_info(login, new_login='', password='', country='', phone='', websi
     if author:
         user.favourite_book_author = author
     user.save()
+
+
+def get_names():
+    return [user.login for user in list(User.select())]
+

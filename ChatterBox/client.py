@@ -15,6 +15,7 @@ class Client(LineOnlyReceiver):
 
     def connectionMade(self):
         self.factory.window.client = self
+        self.factory.window.send_message('/get_users')
 
     def lineReceived(self, line: bytes):
         message = line.decode()
@@ -24,8 +25,6 @@ class Client(LineOnlyReceiver):
             return
         elif message == '<login or password is incorrect>':
             window.login_form.error_label.setText('Login or password is incorrect')
-        elif message.startswith('unique '):
-            window.uniques.append(message.replace('unique ', ''))
         elif message.startswith('successful'):
             login = message.replace('successful ', '')
             window.current_user_lbl.setText(login)
@@ -42,7 +41,10 @@ class Client(LineOnlyReceiver):
         elif message.startswith('password changed'):
             self.factory.window.current_user_lbl.setText(window.login)
             self.factory.window.messages_history_plain_text.appendPlainText(f'Password changed')
-
+        elif message.startswith('/logins'):
+            message = message.replace('/logins\n', '')
+            users = message.split('\n')
+            self.factory.window.users = users
         else:
             self.factory.window.messages_history_plain_text.appendPlainText(message)
 
@@ -50,7 +52,7 @@ class Client(LineOnlyReceiver):
         try:
             self.sendLine(message.encode())
         except:
-            window.messages_history_plain_text.appendPlainText('<ERROR 522>\nCONNECTION TIMED OUT')
+            self.factory.window.messages_history_plain_text.appendPlainText('<ERROR 522>\nCONNECTION TIMED OUT')
 
 
 class Connector(ClientFactory):
@@ -72,7 +74,7 @@ class ChatWindow(ChatterBox):
         self.reg_form.submit_btn.pressed.connect(self.create_user)
         self.login = None
         self.edit_form.submit_btn.pressed.connect(self.save_user_data)
-        self.uniques = list()
+        self.users = list()
 
     def keyPressEvent(self, event):
         from PyQt5.QtCore import Qt
@@ -137,9 +139,9 @@ class ChatWindow(ChatterBox):
 
         if login:
             if not check_valid_login(login):
-                self.send_message(f'/check {login}')
-                if login in self.uniques:
+                if login not in self.users:
                     self.send_message(f'/change_user_data login {login}')
+                    self.send_message('/get_users')
                 else:
                     self.edit_form.login_error_label.setText('Username has already been taken')
                     self.edit_form.login_error_label.resize(self.edit_form.login_error_label.sizeHint())
@@ -161,7 +163,6 @@ class ChatWindow(ChatterBox):
             else:
                 self.edit_form.phone_error_label.setText('Incorrect number format')
                 self.edit_form.phone_error_label.resize(self.edit_form.phone_error_label.sizeHint())
-
 
 
 app = QApplication(sys.argv)

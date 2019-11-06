@@ -22,8 +22,9 @@ class Handler(LineOnlyReceiver):
     def lineReceived(self, line):
         message = line.decode()
         if self.login and not (message.startswith('/login') or
-                                           message.startswith('/register') or
-                                           message.startswith('/change_user_data')):
+                               message.startswith('/register') or
+                               message.startswith('/change_user_data') or
+                               message.startswith('/get_users')):
             login = message.split('::')[1]
             date_time = message.split('::')[2]
             date, time = date_time.split()[0], date_time.split()[1]
@@ -56,12 +57,9 @@ class Handler(LineOnlyReceiver):
                 database.edit_user_info(self.login, author=new_val)
             if edit_field == 'quote':
                 database.edit_user_info(self.login, quote=new_val)
-        elif message.startswith('/check'):
-            login = message.replace('/check ', '')
-            if database.is_unique(login):
-                self.sendLine(f'unique {login}'.encode())
-
-
+        elif message == '/get_users':
+            users = database.get_names()
+            self.sendLine('/logins\n'.encode() + '\n'.join(users).encode())
         else:
             if message.startswith('/login '):
                 login, password = message.replace('/login ', '').split()[0], message.replace('/login ', '').split()[1]
