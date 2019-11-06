@@ -39,8 +39,8 @@ class ChatterBox(QMainWindow):
         self.current_user_lbl.setObjectName("current_user_lbl")
 
         self.online_label = QLabel(self)
-        self.online_label.setText('Online now: ')
-        self.online_label.setGeometry(650, 10, 100, 50)
+        self.online_label.setText('Connection to server failed')
+        self.online_label.setGeometry(650, 10, 200, 50)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.send_btn = QtWidgets.QPushButton(self.centralwidget)

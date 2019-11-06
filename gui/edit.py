@@ -16,10 +16,6 @@ class EditForm(QDialog):
         self.label.setGeometry(QtCore.QRect(30, 30, 47, 13))
         self.label.setObjectName("label")
 
-        self.quote_plain_text = QtWidgets.QPlainTextEdit(EditForm)
-        self.quote_plain_text.setGeometry(QtCore.QRect(290, 170, 301, 201))
-        self.quote_plain_text.setObjectName("quote_plain_text")
-
         self.login_ln = QtWidgets.QLineEdit(EditForm)
         self.login_ln.setGeometry(QtCore.QRect(30, 50, 113, 20))
         self.login_ln.setObjectName("login_ln")
@@ -45,15 +41,19 @@ class EditForm(QDialog):
         self.country_ln.setGeometry(QtCore.QRect(30, 170, 113, 20))
         self.country_ln.setObjectName("country_ln")
 
-        self.author_ln = QtWidgets.QLineEdit(EditForm)
-        self.author_ln.setGeometry(QtCore.QRect(30, 350, 113, 20))
-        self.author_ln.setObjectName("author_ln")
-
         self.phone_ln = QtWidgets.QLineEdit(EditForm)
         self.phone_ln.setGeometry(QtCore.QRect(30, 230, 113, 20))
         self.phone_ln.setObjectName("phone_ln")
         self.phone_error_label = QLabel(self)
         self.phone_error_label.move(150, 235)
+
+        self.website_ln = QtWidgets.QLineEdit(EditForm)
+        self.website_ln.setGeometry(QtCore.QRect(30, 290, 113, 20))
+        self.website_ln.setObjectName("website_ln")
+
+        self.author_ln = QtWidgets.QLineEdit(EditForm)
+        self.author_ln.setGeometry(QtCore.QRect(30, 350, 113, 20))
+        self.author_ln.setObjectName("author_ln")
 
         self.label_4 = QtWidgets.QLabel(EditForm)
         self.label_4.setGeometry(QtCore.QRect(30, 330, 131, 16))
@@ -67,13 +67,13 @@ class EditForm(QDialog):
         self.label_6.setGeometry(QtCore.QRect(30, 270, 47, 13))
         self.label_6.setObjectName("label_6")
 
-        self.website_ln = QtWidgets.QLineEdit(EditForm)
-        self.website_ln.setGeometry(QtCore.QRect(30, 290, 113, 20))
-        self.website_ln.setObjectName("website_ln")
-
         self.label_7 = QtWidgets.QLabel(EditForm)
         self.label_7.setGeometry(QtCore.QRect(290, 140, 281, 16))
         self.label_7.setObjectName("label_7")
+
+        self.quote_plain_text = QtWidgets.QPlainTextEdit(EditForm)
+        self.quote_plain_text.setGeometry(QtCore.QRect(290, 170, 301, 201))
+        self.quote_plain_text.setObjectName("quote_plain_text")
 
         self.submit_btn = QPushButton(self)
         self.submit_btn.setText('Save')
