@@ -32,10 +32,7 @@ def check_auth(login, password) -> bool:
 
 
 def is_unique(login) -> bool:
-    try:
-        return bool(User.get(User.login == login))
-    except:
-        return False
+    return bool(User.get(User.login == login))
 
 
 def add_user(login, password, country='', phone='', website='', quote='', author=''):

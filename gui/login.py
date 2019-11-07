@@ -13,24 +13,24 @@ class LoginForm(QDialog):
         self.setWindowTitle('Sign in')
         self.setWindowModality(QtCore.Qt.ApplicationModal)
         self.login_ln = QLineEdit(self)
-        self.login_ln.setGeometry(QRect(40, 50, 191, 20))
+        self.login_ln.setGeometry(QRect(40, 70, 191, 20))
 
         self.password_ln = QLineEdit(self)
-        self.password_ln.setGeometry(QRect(40, 100, 191, 20))
+        self.password_ln.setGeometry(QRect(40, 120, 191, 20))
         self.password_ln.setEchoMode(QLineEdit.Password)
 
         self.label1 = QLabel(self)
         self.label1.setText('Login')
-        self.label1.setGeometry(QRect(40, 30, 47, 13))
+        self.label1.setGeometry(QRect(40, 50, 47, 13))
 
         self.label_2 = QLabel(self)
         self.label_2.setText('Password')
-        self.label_2.setGeometry(QRect(40, 80, 47, 13))
+        self.label_2.setGeometry(QRect(40, 100, 47, 13))
 
         self.submit_btn = QPushButton(self)
-        self.submit_btn.move(90, 140)
+        self.submit_btn.move(90, 160)
         self.submit_btn.setText('Sign In')
 
         self.error_label = QLabel(self)
-        self.error_label.setGeometry(10, 10, 100, 50)
+        self.error_label.setGeometry(10, 5, 100, 50)
         self.error_label.setWordWrap(True)

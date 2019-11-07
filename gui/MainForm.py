@@ -9,7 +9,7 @@ class ChatterBox(QMainWindow):
         self.login_form = login.LoginForm(self)
         self.reg_form = signup.SignUpForm(self)
         self.edit_form = edit.EditForm(self)
-        self.info_form = info.InfoForm(self)
+        self.info_form = info.InfoForm()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")

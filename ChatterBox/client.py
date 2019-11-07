@@ -5,6 +5,8 @@ from twisted.protocols.basic import LineOnlyReceiver
 from hashlib import md5
 from PyQt5.QtWidgets import QApplication
 
+from gui.info import InfoForm
+
 sys.path.append('../')
 from gui.MainForm import ChatterBox
 from gui.signup import check_valid_login, check_valid_password
@@ -39,6 +41,9 @@ class Client(LineOnlyReceiver):
             self.factory.window.login = message.replace('nickname changed ', '')
             self.factory.window.current_user_lbl.setText(window.login)
             self.factory.window.messages_history_plain_text.appendPlainText(f'Nickname changed to {window.login}')
+            self.factory.window.info_form = InfoForm()
+            self.factory.window.info_form.combo.currentIndexChanged.connect(self.factory.window.get_user_info)
+            self.factory.window.send_message('/get_users')
         elif message.startswith('password changed'):
             self.factory.window.current_user_lbl.setText(window.login)
             self.factory.window.messages_history_plain_text.appendPlainText(f'Password changed')
@@ -110,9 +115,9 @@ class ChatWindow(ChatterBox):
         if not check_valid_login(login):
             if not check_valid_password(password):
                 if password == confirm:
-                    self.send_message(f'/register {login} {md5(password.encode()).hexdigest()}')
                     self.send_message('/get_users')
                     self.info_form.combo.addItems(self.users)
+                    self.send_message(f'/register {login} {md5(password.encode()).hexdigest()}')
                 else:
                     self.reg_form.error_label.setText('Passwords do not match')
             else:
@@ -174,6 +179,8 @@ class ChatWindow(ChatterBox):
 
     def open_info_form(self):
         self.info_form.show()
+        if len(self.info_form.combo) == 1:
+            self.info_form.combo.addItems(self.users)
         print(self.users)
 
     def get_user_info(self):
