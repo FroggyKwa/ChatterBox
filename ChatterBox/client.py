@@ -30,6 +30,7 @@ class Client(LineOnlyReceiver):
             window.current_user_lbl.setText(login)
             window.login = login
             window.edit.setVisible(True)
+            window.info.setVisible(True)
             window.reg_form.close()
             window.login_form.close()
         elif message.startswith('Online now: '):
@@ -45,6 +46,9 @@ class Client(LineOnlyReceiver):
             message = message.replace('/logins\n', '')
             users = message.split('\n')
             self.factory.window.users = users
+        elif message.startswith('/info'):
+            info = message.replace('/info ', '').split('\t')
+            self.factory.window.info_form.info_label.setText('\n'.join(info))
         else:
             self.factory.window.messages_history_plain_text.appendPlainText(message)
 
@@ -52,7 +56,7 @@ class Client(LineOnlyReceiver):
         try:
             self.sendLine(message.encode())
         except:
-            self.factory.window.messages_history_plain_text.appendPlainText('<ERROR 522>\nCONNECTION TIMED OUT')
+            window.messages_history_plain_text.appendPlainText('<ERROR 522>\nCONNECTION TIMED OUT')
 
 
 class Connector(ClientFactory):
@@ -70,11 +74,13 @@ class ChatWindow(ChatterBox):
         self.client = Client()
         self.reactor = None
         self.send_btn.pressed.connect(self.send_message)
+        self.info.triggered.connect(self.open_info_form)
         self.login_form.submit_btn.pressed.connect(self.login_user)
         self.reg_form.submit_btn.pressed.connect(self.create_user)
         self.login = None
         self.edit_form.submit_btn.pressed.connect(self.save_user_data)
         self.users = list()
+        self.info_form.combo.currentIndexChanged.connect(self.get_user_info)
 
     def keyPressEvent(self, event):
         from PyQt5.QtCore import Qt
@@ -105,6 +111,8 @@ class ChatWindow(ChatterBox):
             if not check_valid_password(password):
                 if password == confirm:
                     self.send_message(f'/register {login} {md5(password.encode()).hexdigest()}')
+                    self.send_message('/get_users')
+                    self.info_form.combo.addItems(self.users)
                 else:
                     self.reg_form.error_label.setText('Passwords do not match')
             else:
@@ -115,6 +123,8 @@ class ChatWindow(ChatterBox):
 
     def login_user(self):
         login = self.login_form.login_ln.text()
+        self.send_message('/get_users')
+        self.info_form.combo.addItems(self.users)
         password = self.login_form.password_ln.text()
         if not check_valid_login(login) and not check_valid_password(password):
             self.send_message(f'/login {login} {md5(password.encode()).hexdigest()}')
@@ -141,11 +151,9 @@ class ChatWindow(ChatterBox):
             if not check_valid_login(login):
                 if login not in self.users:
                     self.send_message(f'/change_user_data login {login}')
-                    self.send_message('/get_users')
                 else:
                     self.edit_form.login_error_label.setText('Username has already been taken')
                     self.edit_form.login_error_label.resize(self.edit_form.login_error_label.sizeHint())
-
             else:
                 self.edit_form.login_error_label.setText('Incorrect login')
                 self.edit_form.login_error_label.resize(self.edit_form.login_error_label.sizeHint())
@@ -164,6 +172,17 @@ class ChatWindow(ChatterBox):
                 self.edit_form.phone_error_label.setText('Incorrect number format')
                 self.edit_form.phone_error_label.resize(self.edit_form.phone_error_label.sizeHint())
 
+    def open_info_form(self):
+        self.info_form.show()
+        print(self.users)
+
+    def get_user_info(self):
+        if self.info_form.combo.currentIndex() != 0:
+            login = self.info_form.combo.currentText()
+            self.send_message(f'/get_info {login}')
+        else:
+            self.info_form.info_label.clear()
+
 
 app = QApplication(sys.argv)
 import qt5reactor
@@ -176,5 +195,3 @@ from twisted.internet import reactor
 reactor.connectTCP("localhost", 7410, Connector(window))
 window.reactor = reactor
 reactor.run()
-
-# TODO: СДЕЛАТЬ ПРОСМОТР ИНФО О ПОЛЬЗОВАТЕЛЕ

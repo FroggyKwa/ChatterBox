@@ -24,7 +24,8 @@ class Handler(LineOnlyReceiver):
         if self.login and not (message.startswith('/login') or
                                message.startswith('/register') or
                                message.startswith('/change_user_data') or
-                               message.startswith('/get_users')):
+                               message.startswith('/get_users') or
+                               message.startswith('/get_info')):
             login = message.split('::')[1]
             date_time = message.split('::')[2]
             date, time = date_time.split()[0], date_time.split()[1]
@@ -60,6 +61,16 @@ class Handler(LineOnlyReceiver):
         elif message == '/get_users':
             users = database.get_names()
             self.sendLine('/logins\n'.encode() + '\n'.join(users).encode())
+        elif message.startswith('/get_info'):
+            login = message.replace('/get_info ', '')
+            user = database.get_user(login)
+            country = user.country if user.country else ''
+            phone = user.phone_number if user.phone_number else ''
+            website = user.website if user.website else ''
+            author = user.favourite_book_author if user.favourite_book_author else ''
+            quote = user.favourite_quote if user.favourite_quote else ''
+            self.sendLine(f'/info {login}\t{country}\t{phone}\t{website}\t{author}\t{quote}'.encode())
+
         else:
             if message.startswith('/login '):
                 login, password = message.replace('/login ', '').split()[0], message.replace('/login ', '').split()[1]

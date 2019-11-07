@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QLabel
-from gui import login, signup, edit
+from PyQt5.QtWidgets import QMainWindow, QLabel, QComboBox
+from gui import login, signup, edit, info
 
 
 class ChatterBox(QMainWindow):
@@ -9,6 +9,7 @@ class ChatterBox(QMainWindow):
         self.login_form = login.LoginForm(self)
         self.reg_form = signup.SignUpForm(self)
         self.edit_form = edit.EditForm(self)
+        self.info_form = info.InfoForm(self)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -42,6 +43,8 @@ class ChatterBox(QMainWindow):
         self.online_label.setText('Connection to server failed')
         self.online_label.setGeometry(650, 10, 200, 50)
 
+
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.send_btn = QtWidgets.QPushButton(self.centralwidget)
         self.send_btn.move(750, 555)
@@ -51,15 +54,6 @@ class ChatterBox(QMainWindow):
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 859, 21))
         self.menubar.setObjectName("menubar")
-
-        self.menuLog_In = QtWidgets.QMenu(self.menubar)
-        self.menuLog_In.setObjectName("menuLog_In")
-
-        self.menuSign_Up = QtWidgets.QMenu(self.menubar)
-        self.menuSign_Up.setObjectName("menuSign_Up")
-
-        self.menuRegister = QtWidgets.QMenu(self.menubar)
-        self.menuRegister.setObjectName("menuRegister")
 
         MainWindow.setMenuBar(self.menubar)
 
@@ -72,6 +66,9 @@ class ChatterBox(QMainWindow):
         self.edit = self.menubar.addAction('Edit')
         self.edit.setVisible(False)
         self.edit.triggered.connect(self.open_edit_form)
+
+        self.info = self.menubar.addAction('Info')
+        self.info.setVisible(False)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -90,6 +87,6 @@ class ChatterBox(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ChatterBox"))
         self.messagebox_text_edit.setPlaceholderText(_translate("", "Type your message here"))
-        self.menuLog_In.setTitle(_translate("MainWindow", "Log-In"))
-        self.menuSign_Up.setTitle(_translate("MainWindow", "Sign-Up"))
-        self.menuRegister.setTitle(_translate("MainWindow", "Register"))
+        #self.menuLog_In.setTitle(_translate("MainWindow", "Log-In"))
+        #self.menuSign_Up.setTitle(_translate("MainWindow", "Sign-Up"))
+        #self.menuRegister.setTitle(_translate("MainWindow", "Register"))
