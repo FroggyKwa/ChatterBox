@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QLabel, QComboBox
+from PyQt5.QtWidgets import QMainWindow, QLabel
 from gui import login, signup, edit, info
 
 
@@ -10,6 +10,9 @@ class ChatterBox(QMainWindow):
         self.reg_form = signup.SignUpForm(self)
         self.edit_form = edit.EditForm(self)
         self.info_form = info.InfoForm()
+        import os
+        scriptDir = os.path.dirname(os.path.realpath(__file__))
+        self.setWindowIcon(QtGui.QIcon(scriptDir + os.path.sep + '../res/logo.ico'))
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
