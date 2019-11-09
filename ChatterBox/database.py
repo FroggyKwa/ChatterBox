@@ -32,7 +32,7 @@ def check_auth(login, password) -> bool:
 
 
 def is_unique(login) -> bool:
-    return bool(User.get(User.login == login))
+    return bool(User.select().where(User.login == login))
 
 
 def add_user(login, password, country='', phone='', website='', quote='', author=''):

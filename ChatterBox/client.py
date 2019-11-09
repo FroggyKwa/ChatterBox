@@ -5,11 +5,11 @@ from twisted.protocols.basic import LineOnlyReceiver
 from hashlib import md5
 from PyQt5.QtWidgets import QApplication
 
-from gui.info import InfoForm
-
-sys.path.append('../')
+sys.path.append(sys.path[0] + '/../')
+print(sys.path)
 from gui.MainForm import ChatterBox
 from gui.signup import check_valid_login, check_valid_password
+from gui.info import InfoForm
 
 
 class Client(LineOnlyReceiver):
@@ -41,9 +41,6 @@ class Client(LineOnlyReceiver):
             self.factory.window.login = message.replace('nickname changed ', '')
             self.factory.window.current_user_lbl.setText(window.login)
             self.factory.window.messages_history_plain_text.appendPlainText(f'Nickname changed to {window.login}')
-            self.factory.window.info_form = InfoForm()
-            self.factory.window.info_form.combo.currentIndexChanged.connect(self.factory.window.get_user_info)
-            self.factory.window.send_message('/get_users')
         elif message.startswith('password changed'):
             self.factory.window.current_user_lbl.setText(window.login)
             self.factory.window.messages_history_plain_text.appendPlainText(f'Password changed')
@@ -51,6 +48,7 @@ class Client(LineOnlyReceiver):
             message = message.replace('/logins\n', '')
             users = message.split('\n')
             self.factory.window.users = users
+            self.factory.window.info_form.combo.addItems(users)
         elif message.startswith('/info'):
             info = message.replace('/info ', '').split('\t')
             self.factory.window.info_form.info_label.setText('\n'.join(info))
@@ -115,8 +113,6 @@ class ChatWindow(ChatterBox):
         if not check_valid_login(login):
             if not check_valid_password(password):
                 if password == confirm:
-                    self.send_message('/get_users')
-                    self.info_form.combo.addItems(self.users)
                     self.send_message(f'/register {login} {md5(password.encode()).hexdigest()}')
                 else:
                     self.reg_form.error_label.setText('Passwords do not match')
@@ -128,8 +124,6 @@ class ChatWindow(ChatterBox):
 
     def login_user(self):
         login = self.login_form.login_ln.text()
-        self.send_message('/get_users')
-        self.info_form.combo.addItems(self.users)
         password = self.login_form.password_ln.text()
         if not check_valid_login(login) and not check_valid_password(password):
             self.send_message(f'/login {login} {md5(password.encode()).hexdigest()}')
@@ -177,10 +171,14 @@ class ChatWindow(ChatterBox):
                 self.edit_form.phone_error_label.setText('Incorrect number format')
                 self.edit_form.phone_error_label.resize(self.edit_form.phone_error_label.sizeHint())
 
+    def get_info_form(self):
+        self.info_form = InfoForm()
+        self.info_form.combo.currentIndexChanged.connect(self.get_user_info)
+        self.send_message('/get_users')
+
     def open_info_form(self):
+        self.get_info_form()
         self.info_form.show()
-        if len(self.info_form.combo) == 1:
-            self.info_form.combo.addItems(self.users)
         print(self.users)
 
     def get_user_info(self):
