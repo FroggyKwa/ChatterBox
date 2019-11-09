@@ -73,3 +73,6 @@ def get_names():
 
 def get_user(login):
     return User.get(User.login == login)
+
+
+db.create_tables([User, Messages])
