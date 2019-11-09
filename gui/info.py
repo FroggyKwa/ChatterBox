@@ -1,5 +1,5 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QDialog, QPushButton, QLineEdit, QLabel, QComboBox
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QDialog, QLabel, QComboBox
 
 
 class InfoForm(QDialog):
