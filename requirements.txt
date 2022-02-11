@@ -1,5 +1,5 @@
 PyQt5==5.13.1
-Twisted==19.7.0
+Twisted==22.1.0
 peewee==3.11.2
 qt5reactor==0.5
 pywin32==225
